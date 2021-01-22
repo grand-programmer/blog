@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Article;
+use App\Jobs\Likes;
+use App\Jobs\Viewes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -37,30 +39,18 @@ class ArticleController extends Controller
     public function saveLike(Article $article, Request $request)
     {
         if ($request->ajax()) {
-            DB::transaction(function () use ($article) {
-                $article->like()->updateOrCreate(
-                    [
-                        'liked' => $article->like_count + 1,
-                    ]
-                );
-            }, 5);
-
-            return response()->json($article->like_count);
+            $count=$article->like_count;
+            Likes::dispatchNow($article);
+            return response()->json($count+1);
         }
     }
 
     public function saveView(Article $article, Request $request)
     {
         if ($request->ajax()) {
-            DB::transaction(function () use ($article) {
-                $article->view()->updateOrCreate(
-                    [
-                        'viewed' => $article->view_count + 1,
-                    ]
-                );
-            }, 5);
-
-            return response()->json($article->view_count);
+            $count=$article->view_count;
+            Viewes::dispatchNow($article);
+            return response()->json($count+1);
         }
     }
 

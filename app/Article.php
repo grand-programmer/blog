@@ -31,10 +31,10 @@ class Article extends Model
     }
     public function getLikeCountAttribute()
     {
-        return $this->like()->get('liked')->count();
+        return $this->like()->sum('liked');
     }
     public function getViewCountAttribute()
     {
-         return $this->view()->get('viewed')->count();
+         return $this->view()->sum('viewed');
     }
 }
